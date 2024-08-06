@@ -1,3 +1,24 @@
+
+x-airflow-common:
+  &airflow-common
+  image: apache/airflow:latest
+  environment:
+    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://ecomm_user:secretPassw0rd@postgres:5432/ecomm_db
+    - AIRFLOW__CORE__FERNET_KEY=FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
+    - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    - AIRFLOW__CORE__LOGGING_LEVEL=INFO
+    - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./scripts:/opt/airflow/scripts
+  depends_on:
+    - postgres
+  networks:
+    - pg-network
+
 services:
   postgres:
     networks:
@@ -13,6 +34,7 @@ services:
       - ./pg_data:/var/lib/postgresql/data
       - ./data:/data
       - ./source_setup/init.sql:/docker-entrypoint-initdb.d/init.sql
+
   pgadmin:
     networks:
       - pg-network
@@ -21,30 +43,40 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
-      - "8081:80" 
-  
-  airflow:
-    image: apache/airflow:2.2.3
-    environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://ecomm_user:secretPassw0rd@postgres:5432/ecomm_db
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
-      AIRFLOW__WEBSERVER__RBAC: 'True'
-      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
-      AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: 'True'
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./plugins:/opt/airflow/plugins
-      - ./scripts:/opt/airflow/scripts
+      - "8081:80"
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - airflow db init &&
+        airflow users create
+          --role Admin
+          --username airflow
+          --password airflow
+          --email airflow@airflow.com
+          --firstname airflow
+          --lastname airflow
+    restart: on-failure
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: airflow webserver
     ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-    networks:
-      - pg-network
+      - 8080:8080
+    container_name: airflow_webserver
+    restart: always
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: airflow scheduler
+    container_name: airflow_scheduler
+    restart: always
 
 volumes:
   postgres_data:
+
 networks:
   pg-network:
