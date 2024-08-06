@@ -22,6 +22,28 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
       - "8081:80" 
+  
+  airflow:
+    image: apache/airflow:2.2.3
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://ecomm_user:secretPassw0rd@postgres:5432/ecomm_db
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__WEBSERVER__RBAC: 'True'
+      AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+      AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: 'True'
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./scripts:/opt/airflow/scripts
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - pg-network
+
 volumes:
   postgres_data:
 networks:
