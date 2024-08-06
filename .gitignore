@@ -1,3 +1,4 @@
 capenv
 schema_gen.py
 pg_data
+.DS_Store

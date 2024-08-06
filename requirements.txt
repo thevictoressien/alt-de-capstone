@@ -7,7 +7,7 @@ packaging==24.1
 pandas==2.2.2
 pathspec==0.12.1
 platformdirs==4.2.2
-psycopg2==2.9.9
+psycopg2-binary
 python-dateutil==2.9.0.post0
 pytz==2024.1
 six==1.16.0
