@@ -267,7 +267,7 @@ class BigQueryManager:
         schema: List[bigquery.SchemaField] = None,
         field_delimiter: str = ",",
         create_disposition: str = "CREATE_IF_NEEDED",
-        write_disposition: str = "WRITE_APPEND"
+        write_disposition: str = "WRITE_TRUNCATE",
     ) -> None:
         """
         Load data from Google Cloud Storage into a BigQuery table.
