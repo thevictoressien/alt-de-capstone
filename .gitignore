@@ -5,3 +5,4 @@ logs
 data
 plugins
 .DS_Store
+__pycache__
