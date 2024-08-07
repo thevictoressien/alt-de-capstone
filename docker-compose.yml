@@ -13,7 +13,6 @@ x-airflow-common:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./scripts:/opt/airflow/scripts
   depends_on:
     - postgres
   networks:
