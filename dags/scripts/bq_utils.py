@@ -31,7 +31,7 @@ def fetch_job_config(file_format, schema, field_delimiter, create_disposition='C
         field_delimiter=field_delimiter,
         quote_character="",
         schema=schema,
-        autodetect=False,
+        autodetect=True,
         write_disposition = write_disposition
     ),
 
