@@ -1,34 +1,33 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.providers.google.cloud.transfers.postgres_to_gcs import PostgresToGCSOperator
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.models import Variable
 from datetime import datetime, timedelta
 from airflow.utils.dates import days_ago
 from airflow.operators.dummy import DummyOperator
-from scripts.extract_load_table import (
-    extract_from_postgres,
-    upload_to_gcs,
-    load_to_bigquery,
-)
+from scripts.bq_utils import load_schema
 
-
-# table and schema name for this specific DAG
+# postgres variables
 TABLE_NAME = "orders"
-SCHEMA_NAME = "ecomm"
-dag_name = f"{TABLE_NAME}_raw"
+SCHEMA_NAME = Variable.get("pg_schema_name")
+CONNECTION_ID = Variable.get("postgres_capstone_conn")
+
+# GCP variables
+GCP_CONNECTION_ID = Variable.get("bigquery_capstone_conn")
+BQ_PROJECT_ID =  Variable.get("project_id") 
+BQ_DATASET_ID = Variable.get("dataset_id")
+BQ_SCHEMA = Variable.get(f"bq_{TABLE_NAME}_schema") # schema stored in gcs bucket
+BQ_TABLE_ID = f"{TABLE_NAME}_raw"
+
+GCS_BUCKET_NAME = Variable.get("bucket_name")
+
+CSV_FILENAME = f"{TABLE_NAME}.csv"
+
+# dag args
+dag_name = f"postgres_{TABLE_NAME}_full_load"
 schedule_interval = timedelta(days=1)
 description = f"ETL DAG for {SCHEMA_NAME}.{TABLE_NAME}"
-tags = ["postgres", "ecommerce", "raw"]
-
-
-# retreieve variables from Airflow variables
-bucket_name = Variable.get("bucket_name")
-location = Variable.get("location")
-storage_class = Variable.get("storage_class")
-dataset_id = Variable.get("dataset_id")
-project_id = Variable.get("project_id")
-google_cloud_credentials = Variable.get("google_cloud_credentials")
-
-schema = []
+tags = ["postgres", "ecommerce", "raw", "full load"]
 
 default_args = {
     "owner": "airflow",
@@ -43,53 +42,39 @@ default_args = {
 dag = DAG(
     dag_id=dag_name,
     default_args=default_args,
-    description=f"ETL DAG for {SCHEMA_NAME}.{TABLE_NAME}",
+    description=description,
     schedule_interval=schedule_interval,
     start_date=days_ago(1),
+    catchup=False,
     tags=tags,
 )
 
 start = DummyOperator(dag=dag, task_id="start")
 
-
-extract_task = PythonOperator(
-    task_id="extract_from_postgres",
-    python_callable=extract_from_postgres,
-    op_kwargs={"table_name": TABLE_NAME, "schema_name": SCHEMA_NAME},
+postgres_to_gcs = PostgresToGCSOperator(
+    task_id=f"postgres_{TABLE_NAME}_to_gcs",
+    postgres_conn_id=CONNECTION_ID,
+    sql=f"SELECT * FROM {SCHEMA_NAME}.{TABLE_NAME};",
+    bucket=GCS_BUCKET_NAME,
+    filename=CSV_FILENAME,
+    field_delimiter=",",
+    export_format="csv",
+    gzip=False,
+    task_concurrency=1,
+    gcp_conn_id= GCP_CONNECTION_ID,
     dag=dag,
 )
 
-upload_task = PythonOperator(
-    task_id="upload_to_gcs",
-    python_callable=upload_to_gcs,
-    op_kwargs={
-        "credentials": google_cloud_credentials,
-        "project_id": project_id,
-        "bucket_name": bucket_name,
-        "location": location,
-        "storage_class": storage_class,
-        "blob_name": f"{TABLE_NAME}.csv",
-        "table_name": TABLE_NAME,
-        "schema_name": SCHEMA_NAME,
-    },
+gcs_to_bigquery = GCSToBigQueryOperator(
+    task_id=f"gcs_{TABLE_NAME}_to_bigquery",
+    bucket=GCS_BUCKET_NAME,
+    source_objects=[CSV_FILENAME],
+    schema_fields=load_schema(BQ_SCHEMA), 
+    destination_project_dataset_table=f"{BQ_PROJECT_ID}.{BQ_DATASET_ID}.{BQ_TABLE_ID}",
+    create_disposition="CREATE_IF_NEEDED",
+    write_disposition="WRITE_TRUNCATE",
+    gcp_conn_id=GCP_CONNECTION_ID,
     dag=dag,
 )
 
-
-load_task = PythonOperator(
-    task_id="load_to_bigquery",
-    python_callable=load_to_bigquery,
-    op_kwargs={
-        'project_id': project_id,
-        "table_name": TABLE_NAME,
-        "schema_name": SCHEMA_NAME,
-        # "schema": schema,
-        "bucket_name": bucket_name,
-        "location": location,
-        "storage_class": storage_class,
-        "dataset_id": dataset_id,
-    },
-    dag=dag,
-)
-
-start >> extract_task >> upload_task >> load_task
+start >> postgres_to_gcs >> gcs_to_bigquery
