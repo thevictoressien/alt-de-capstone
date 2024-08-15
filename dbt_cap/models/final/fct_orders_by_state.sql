@@ -5,4 +5,5 @@ SELECT
     RANK() OVER (ORDER BY total_orders DESC) AS order_rank
 FROM
     {{ ref('int_orders_by_state') }}
+qualify RANK() OVER (ORDER BY total_orders DESC) <= 5
 order by 3

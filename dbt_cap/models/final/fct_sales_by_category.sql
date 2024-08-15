@@ -5,4 +5,5 @@ SELECT
     RANK() OVER (ORDER BY total_sales DESC) AS sales_rank
 FROM
     {{ ref('int_sales_by_category') }}
-order by 3
+qualify RANK() OVER (ORDER BY total_sales DESC) <= 5
+order by 3 
