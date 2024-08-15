@@ -1,18 +1,17 @@
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.utils.dates import days_ago
-from airflow.operators.dummy import DummyOperator
-from airflow.operators.bash_operator import BashOperator
-from scripts.bq_utils import load_schema
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.bash import BashOperator
 
 
 
 
 
 # dag args
-dag_name = f"dbt_transformation"
+dag_name = "dbt_transformation"
 schedule_interval = timedelta(days=1)
-description = f"DAG that triggers dbt transformations of BigQuery tables"
+description = "DAG that triggers dbt transformations of BigQuery tables"
 tags = ["dbt", "transformation", "model"]
 
 default_args = {
@@ -35,7 +34,7 @@ dag = DAG(
     tags=tags,
 )
 
-start = DummyOperator(dag=dag, task_id="start")
+start = EmptyOperator(dag=dag, task_id="start")
 
 run_dbt_models = BashOperator(
     task_id='run_dbt_models',

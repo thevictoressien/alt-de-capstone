@@ -4,7 +4,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQue
 from airflow.models import Variable
 from datetime import datetime, timedelta
 from airflow.utils.dates import days_ago
-from airflow.operators.dummy import DummyOperator
+from airflow.operators.empty import EmptyOperator
 from scripts.bq_utils import load_schema
 
 # postgres variables
@@ -49,7 +49,7 @@ dag = DAG(
     tags=tags,
 )
 
-start = DummyOperator(dag=dag, task_id="start")
+start = EmptyOperator(dag=dag, task_id="start")
 
 postgres_to_gcs = PostgresToGCSOperator(
     task_id=f"postgres_{TABLE_NAME}_to_gcs",
