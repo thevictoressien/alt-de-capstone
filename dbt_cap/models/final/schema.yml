@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: fct_sales_by_category
+    columns:
+      - name: product_category_name
+        tests:
+          - unique
+          - not_null
+  - name: fct_avg_delivery_time
+    columns:
+      - name: avg_delivery_time_days
+        tests:
+          - not_null
+  - name: fct_orders_by_state
+    columns:
+      - name: customer_state
+        tests:
+          - unique
+          - not_null

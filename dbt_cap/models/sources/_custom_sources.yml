@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: raw
+    project: alt-de-capstone
+    dataset: raw
+    tables:
+      - name: customers_raw
+      - name: geolocation_raw
+      - name: orderitems_raw
+      - name: orderpayments_raw
+      - name: orderreviews_raw
+      - name: orders_raw
+      - name: productcategorynametranslation_raw
+      - name: products_raw
+      - name: sellers_raw
+    loader: bigquery
