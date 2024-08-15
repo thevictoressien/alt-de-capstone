@@ -7,3 +7,11 @@ plugins
 .DS_Store
 __pycache__
 keys
+target/
+dbt_packages/
+logs/
+macros
+snapshots
+analyses
+seeds
+tests
