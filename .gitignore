@@ -15,3 +15,4 @@ snapshots
 analyses
 seeds
 tests
+.env
