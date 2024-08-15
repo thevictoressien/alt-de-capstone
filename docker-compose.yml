@@ -6,12 +6,12 @@ x-airflow-common:
     dockerfile: Dockerfile
   environment:
     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://ecomm_user:secretPassw0rd@postgres:5432/ecomm_db
-    - AIRFLOW__CORE__FERNET_KEY=FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW_FERNET_KEY}
     - AIRFLOW__CORE__LOAD_EXAMPLES=False
     - AIRFLOW__CORE__LOGGING_LEVEL=INFO
     - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
-    - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/keys/gcs_keyfile.json
+    - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -29,9 +29,9 @@ services:
       - pg-network
     image: postgres:latest
     environment:
-      POSTGRES_USER: ecomm_user
-      POSTGRES_PASSWORD: secretPassw0rd
-      POSTGRES_DB: ecommerce
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5434:5432"
     volumes:
@@ -44,8 +44,8 @@ services:
       - pg-network
     image: dpage/pgadmin4:8.2
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=root
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
       - "8081:80"
 
@@ -58,9 +58,9 @@ services:
       - airflow db init &&
         airflow users create
           --role Admin
-          --username airflow
-          --password airflow
-          --email airflow@airflow.com
+          --username ${AIRFLOW_USERNAME}
+          --password ${AIRFLOW_PASSWORD}
+          --email ${AIRFLOW_EMAIL}
           --firstname airflow
           --lastname airflow
     restart: on-failure
