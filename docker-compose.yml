@@ -1,7 +1,9 @@
 
 x-airflow-common:
   &airflow-common
-  image: apache/airflow:latest
+  build:
+    context: .
+    dockerfile: Dockerfile
   environment:
     - AIRFLOW__CORE__EXECUTOR=LocalExecutor
     - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://ecomm_user:secretPassw0rd@postgres:5432/ecomm_db
@@ -15,6 +17,7 @@ x-airflow-common:
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./keys:/opt/airflow/keys
+    - ./dbt_cap:/opt/airflow/dbt 
   depends_on:
     - postgres
   networks:
@@ -28,7 +31,7 @@ services:
     environment:
       POSTGRES_USER: ecomm_user
       POSTGRES_PASSWORD: secretPassw0rd
-      POSTGRES_DB: ecomm_db
+      POSTGRES_DB: ecommerce
     ports:
       - "5434:5432"
     volumes:
