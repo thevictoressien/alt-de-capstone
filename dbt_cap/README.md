@@ -62,13 +62,19 @@ Each layer serves a specific purpose in the data transformation process.
 
 - **`int_avg_delivery_time`**
   - **Sources from**: `stg_orders`
-  - **Calculates**: Delivery time in days for each order
+  - **Calculates**: 
+      - Delivery time in days for each order
+      - Average delivery time across all orders
   - **Filters**: Delivered orders only
 
 ### Final Models
 - **`fct_avg_delivery_time`**
   - **Sources from**: `int_avg_delivery_time`
-  - **Calculates**: Overall average delivery time across all orders
+  - **Calculates**: 
+      - Overall average delivery time across all orders
+      - Number of orders above and below average delivery time
+      - Percentage of orders above and below average delivery time
+  
 
 - **`fct_orders_by_state`**
   - **Sources from**: `int_orders_by_state`
