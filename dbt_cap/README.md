@@ -13,6 +13,7 @@ Each layer serves a specific purpose in the data transformation process.
 
 ## Model Layers and Configurations
 
+![DBT-DAG](../assets/dbt-dag.png)
 ### 1. Staging Layer
 - **Materialization**: View
 - **Purpose**: Initial data cleaning and preparation
