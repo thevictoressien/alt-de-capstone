@@ -1,7 +1,7 @@
 # dbt Models Documentation
 
 ## Overview
-This dbt project, named 'dbt_cap', transforms e-commerce data through a series of models structured in three layers: staging, intermediate, and final. The project aims to provide clean, aggregated data for analysis of sales, orders, and delivery performance.
+This dbt project transforms the e-commerce data through a series of models structured in three layers: staging, intermediate, and final. This process aims to provide clean, aggregated data for analysis of sales, orders, and delivery performance.
 
 ## Project Structure
 The project is organized into three main model layers:
