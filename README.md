@@ -4,6 +4,27 @@
 
 This project develops a robust end-to-end ELT (Extract, Load, Transform) pipeline using the Brazilian E-Commerce dataset from Kaggle. The solution employs a suite of modern data engineering tools, including PostgreSQL, Docker, Docker Compose, Apache Airflow, dbt, and BigQuery, to ingest, process, and analyze e-commerce data. The primary objective is to derive actionable insights into product category sales, delivery times, and order distribution across different states in Brazil.
 
+## Insights
+
+![Dashboard](assets/dashboard.png)
+
+This section addresses key analytical questions using the data models documented in the `models/final` directory. Each question is answered by a specific model that aggregates and processes the data.
+
+### Key Questions and Answers
+
+1. **Which product categories have the highest sales?**
+   - **Answer**: 
+   - **Model**: [fct_sales_by_category](models/final/fct_sales_by_category.sql)
+
+2. **What is the average delivery time for orders?**
+   - **Answer**: 
+   - **Model**: [fct_avg_delivery_time](models/final/fct_avg_delivery_time.sql)
+
+3. **Which states have the highest number of orders?**
+   - **Answer**: 
+   - **Model**: [fct_orders_by_state](models/final/fct_orders_by_state.sql)
+
+
 ## Data Architecture
 ![image](assets/architecture.png)
 Fig: Data Architecture
