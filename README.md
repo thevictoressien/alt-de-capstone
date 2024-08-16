@@ -31,7 +31,7 @@ This section addresses key analytical questions using the data models documented
            - **Orders Below Average**: 61,882
            - **Percentage Above Average**: 35.85%
            - **Percentage Below Average**: 64.15%
-   - **Key Insight**: The majority of orders take longer than the average delivery time, indicating potential areas for improvement in order fulfillment.
+   - **Key Insight**: The data shows that 64.15% of orders have a delivery time below the average of 12.09 days, indicating that most orders are delivered faster than the average. However, 35.85% of orders take longer than the average, which suggests there are opportunities to improve delivery times for a substantial portion of orders.
    - **Model**: [fct_avg_delivery_time](models/final/fct_avg_delivery_time.sql)
 
 3. **Which states have the highest number of orders?**
