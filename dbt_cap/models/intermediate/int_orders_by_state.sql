@@ -7,5 +7,6 @@ from
 join 
     {{source('raw', 'customers_raw')}} c
     on o.customer_id = c.customer_id
+where o.order_status = 'delivered' and o.order_delivered_customer_date is not null
 group by
     1
