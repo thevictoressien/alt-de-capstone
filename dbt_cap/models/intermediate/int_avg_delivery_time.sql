@@ -11,5 +11,4 @@ with order_delivery_times as(
 select
     order_id, 
     delivery_time_days, 
-    avg(delivery_time_days) over() as avg_delivery_time_days
 from order_delivery_times

@@ -1,8 +1,11 @@
 -- models/intermediate/int_orders_by_state.sql
-SELECT
-    customer_state,
+select
+    c.customer_state,
     COUNT(DISTINCT order_id) AS total_orders
-FROM
-    {{ ref('stg_orders') }} 
-GROUP BY
-    customer_state
+from
+    {{ ref('stg_orders') }} o
+join 
+    {{source('raw', 'customers_raw')}} c
+    on o.customer_id = c.customer_id
+group by
+    1
