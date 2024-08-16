@@ -6,7 +6,7 @@ This project develops a robust end-to-end ELT (Extract, Load, Transform) pipelin
 
 ## Insights
 
-![Dashboard](assets/dashboard.jpg)
+![Dashboard](assets/viz.jpg)
 
 This section addresses key analytical questions using the data models documented in the `models/final` directory. Each question is answered by a specific model that aggregates and processes the data.
 
