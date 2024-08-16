@@ -14,14 +14,35 @@ This section addresses key analytical questions using the data models documented
 
 1. **Which product categories have the highest sales?**
    - **Answer**: 
+    - **Top 5 Product Categories by Sales**:
+       1. Health & Beauty: $1,233,131.72 
+       2. Watches & Gifts: $1,165,898.98 
+       3. Bed, Bath & Table: $1,023,434.76 
+       4. Sports & Leisure: $954,673.55 
+       5. Computers & Accessories: $888,613.62 
+   - **Key Insight**: Health & Beauty products lead in total sales, outperforming other categories.
    - **Model**: [fct_sales_by_category](models/final/fct_sales_by_category.sql)
 
 2. **What is the average delivery time for orders?**
    - **Answer**: 
+    - **Overall Average Delivery Time**: 12.09 days
+    Other metrics can be derived from this average, including:
+     - **Orders Above Average**: 34,588
+     - **Orders Below Average**: 61,882
+     - **Percentage Above Average**: 35.85%
+     - **Percentage Below Average**: 64.15%
+   - **Key Insight**: The majority of orders take longer than the average delivery time, indicating potential areas for improvement in order fulfillment.
    - **Model**: [fct_avg_delivery_time](models/final/fct_avg_delivery_time.sql)
 
 3. **Which states have the highest number of orders?**
    - **Answer**: 
+    - **Top 5 States by Order Volume**:
+       1. SP: 40,494 orders 
+       2. RJ: 12,350 orders 
+       3. MG: 11,354 orders
+       4. RS: 5,344 orders 
+       5. PR: 4,923 orders
+   - **Key Insight**: SP leads significantly in order volume, with other states showing lower, but notable, order counts.
    - **Model**: [fct_orders_by_state](models/final/fct_orders_by_state.sql)
 
 
